@@ -68,7 +68,7 @@ public class DefaultCameraModule implements CameraModule, Serializable {
                             path = currentImagePath;
                         }
 
-                        imageReadyListener.onImageReady(ImageFactory.singleListFromPath(path));
+                        imageReadyListener.onImageReady(ImageFactory.singleListFromPath(path, imageUri));
                         ImagePickerUtils.revokeAppPermission(context, imageUri);
                     });
         }

@@ -4,6 +4,7 @@
 
     <string name="ef_ok">OK</string>
     <string name="ef_done">DONE</string>
+    <string name="ef_import">IMPORT SELECTED</string>
     <string name="ef_camera">CAMERA</string>
 
     <string name="ef_title_folder">Folder</string>

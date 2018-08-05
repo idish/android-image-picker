@@ -1,7 +1,9 @@
 package com.esafirm.imagepicker.features;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.esafirm.imagepicker.features.common.ImageLoaderListener;
@@ -29,7 +31,8 @@ public class ImageFileLoader {
             MediaStore.Images.Media._ID,
             MediaStore.Images.Media.DISPLAY_NAME,
             MediaStore.Images.Media.DATA,
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+            MediaStore.Files.FileColumns.MEDIA_TYPE,
     };
 
     public void loadDeviceImages(final boolean isFolderMode, final boolean includeVideo, final ArrayList<File> excludedImages, final ImageLoaderListener listener) {
@@ -97,13 +100,21 @@ public class ImageFileLoader {
                     String name = cursor.getString(cursor.getColumnIndex(projection[1]));
                     String path = cursor.getString(cursor.getColumnIndex(projection[2]));
                     String bucket = cursor.getString(cursor.getColumnIndex(projection[3]));
+                    Uri imageUri;
+                    if (cursor.getInt(cursor.getColumnIndex(projection[4])) == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
+                        imageUri = Uri.withAppendedPath(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, "" + id);
+                    } else {
+                        imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
+                    }
+//                    Uri imageUri = Uri.withAppendedId(MediaStore.Files.getContentUri("external"),
+//                                            cursor.getInt(cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID)));
 
                     File file = makeSafeFile(path);
                     if (file != null) {
                         if (exlucedImages != null && exlucedImages.contains(file))
                             continue;
 
-                        Image image = new Image(id, name, path);
+                        Image image = new Image(id, name, path, imageUri);
                         temp.add(image);
 
                         if (folderMap != null) {
