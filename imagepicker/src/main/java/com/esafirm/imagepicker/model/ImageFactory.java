@@ -9,9 +9,9 @@ import java.util.List;
 
 public class ImageFactory {
 
-    public static List<Image> singleListFromPath(String path, Uri imageUri) {
+    public static List<Image> singleListFromPath(String path, Uri imageUri, MediaType mediaType) {
         List<Image> images = new ArrayList<>();
-        images.add(new Image(0, ImagePickerUtils.getNameFromFilePath(path), path, imageUri));
+        images.add(new Image(0, ImagePickerUtils.getNameFromFilePath(path), path, imageUri, mediaType));
         return images;
     }
 }

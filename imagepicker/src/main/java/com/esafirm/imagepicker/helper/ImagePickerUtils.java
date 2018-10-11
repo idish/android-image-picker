@@ -1,19 +1,19 @@
 package com.esafirm.imagepicker.helper;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.esafirm.imagepicker.features.ImagePickerSavePath;
 import com.esafirm.imagepicker.model.Image;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -82,7 +82,18 @@ public class ImagePickerUtils {
     }
 
     public static boolean isVideoFormat(Image image) {
-        String mimeType = URLConnection.guessContentTypeFromName(image.getPath());
-        return mimeType != null && mimeType.startsWith("video");
+        Uri uri = image.getImageUri();
+        boolean isVideo = false;
+        for (String segment : uri.getPathSegments()) {
+            if (segment.startsWith("video")) {
+                isVideo = true;
+            }
+        }
+        return ContentResolver.SCHEME_CONTENT.equals(uri.getScheme()) && isVideo;
     }
+
+//    public static boolean isVideoFormat(Image image) {
+//        String mimeType = URLConnection.guessContentTypeFromName(image.getPath());
+//        return mimeType != null && mimeType.startsWith("video");
+//    }
 }

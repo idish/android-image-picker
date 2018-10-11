@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import com.esafirm.imagepicker.features.common.ImageLoaderListener;
 import com.esafirm.imagepicker.model.Folder;
 import com.esafirm.imagepicker.model.Image;
+import com.esafirm.imagepicker.model.MediaType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -93,43 +94,48 @@ public class ImageFileLoader {
             if (isFolderMode) {
                 folderMap = new HashMap<>();
             }
-
-            if (cursor.moveToLast()) {
-                do {
-                    long id = cursor.getLong(cursor.getColumnIndex(projection[0]));
-                    String name = cursor.getString(cursor.getColumnIndex(projection[1]));
-                    String path = cursor.getString(cursor.getColumnIndex(projection[2]));
-                    String bucket = cursor.getString(cursor.getColumnIndex(projection[3]));
-                    Uri imageUri;
-                    if (cursor.getInt(cursor.getColumnIndex(projection[4])) == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
-                        imageUri = Uri.withAppendedPath(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, "" + id);
-                    } else {
-                        imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
-                    }
+            try {
+                if (cursor.moveToLast()) {
+                    do {
+                        long id = cursor.getLong(cursor.getColumnIndex(projection[0]));
+                        String name = cursor.getString(cursor.getColumnIndex(projection[1]));
+                        String path = cursor.getString(cursor.getColumnIndex(projection[2]));
+                        String bucket = cursor.getString(cursor.getColumnIndex(projection[3]));
+                        Uri imageUri;
+                        MediaType mediaType;
+                        if (cursor.getInt(cursor.getColumnIndex(projection[4])) == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
+                            imageUri = Uri.withAppendedPath(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, "" + id);
+                            mediaType = MediaType.VIDEO;
+                        } else {
+                            imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
+                            mediaType = MediaType.IMAGE;
+                        }
 //                    Uri imageUri = Uri.withAppendedId(MediaStore.Files.getContentUri("external"),
 //                                            cursor.getInt(cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID)));
 
-                    File file = makeSafeFile(path);
-                    if (file != null) {
-                        if (exlucedImages != null && exlucedImages.contains(file))
-                            continue;
+                        File file = makeSafeFile(path);
+                        if (file != null) {
+                            if (exlucedImages != null && exlucedImages.contains(file))
+                                continue;
 
-                        Image image = new Image(id, name, path, imageUri);
-                        temp.add(image);
+                            Image image = new Image(id, name, path, imageUri, mediaType);
+                            temp.add(image);
 
-                        if (folderMap != null) {
-                            Folder folder = folderMap.get(bucket);
-                            if (folder == null) {
-                                folder = new Folder(bucket);
-                                folderMap.put(bucket, folder);
+                            if (folderMap != null) {
+                                Folder folder = folderMap.get(bucket);
+                                if (folder == null) {
+                                    folder = new Folder(bucket);
+                                    folderMap.put(bucket, folder);
+                                }
+                                folder.getImages().add(image);
                             }
-                            folder.getImages().add(image);
                         }
-                    }
 
-                } while (cursor.moveToPrevious());
+                    } while (cursor.moveToPrevious());
+                }
+            } finally {
+                cursor.close();
             }
-            cursor.close();
 
             /* Convert HashMap to ArrayList if not null */
             List<Folder> folders = null;

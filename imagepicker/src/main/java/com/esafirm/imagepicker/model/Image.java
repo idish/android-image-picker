@@ -10,12 +10,14 @@ public class Image implements Parcelable {
     private String name;
     private String path;
     private Uri imageUri;
+    private MediaType mediaType;
 
-    public Image(long id, String name, String path, Uri imageUri) {
+    public Image(long id, String name, String path, Uri imageUri, MediaType mediaType) {
         this.id = id;
         this.name = name;
         this.path = path;
         this.imageUri = imageUri;
+        this.mediaType = mediaType;
     }
 
     public long getId() {
@@ -44,6 +46,8 @@ public class Image implements Parcelable {
 
     public Uri getImageUri() { return imageUri; }
 
+    public MediaType getMediaType() { return mediaType; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,6 +72,7 @@ public class Image implements Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.path);
         dest.writeParcelable(this.imageUri, flags);
+        dest.writeInt(this.mediaType.value);
     }
 
     protected Image(Parcel in) {
@@ -75,6 +80,7 @@ public class Image implements Parcelable {
         this.name = in.readString();
         this.path = in.readString();
         this.imageUri = in.readParcelable(Uri.class.getClassLoader());
+        this.mediaType = MediaType.fromInteger(in.readInt());
     }
 
     public static final Creator<Image> CREATOR = new Creator<Image>() {
