@@ -478,20 +478,20 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
     protected void onStart() {
         super.onStart();
 
-        if (isCameraOnly) {
-            return;
-        }
+//        if (isCameraOnly) {
+//            return;
+//        }
 
-        if (handler == null) {
-            handler = new Handler();
-        }
-        observer = new ContentObserver(handler) {
-            @Override
-            public void onChange(boolean selfChange) {
-                getData();
-            }
-        };
-        getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, false, observer);
+//        if (handler == null) {
+//            handler = new Handler();
+//        }
+//        observer = new ContentObserver(handler) {
+//            @Override
+//            public void onChange(boolean selfChange) {
+//                getData();
+//            }
+//        };
+//        getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, false, observer);
     }
 
     @Override
