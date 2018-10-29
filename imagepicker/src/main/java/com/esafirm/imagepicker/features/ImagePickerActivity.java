@@ -474,14 +474,14 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//
 //        if (isCameraOnly) {
 //            return;
 //        }
-
+//
 //        if (handler == null) {
 //            handler = new Handler();
 //        }
@@ -492,7 +492,7 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
 //            }
 //        };
 //        getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, false, observer);
-    }
+//    }
 
     @Override
     protected void onDestroy() {
