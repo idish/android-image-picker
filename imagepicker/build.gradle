@@ -30,7 +30,7 @@ android {
     }
 
     resourcePrefix "ef_"
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
 }
 
 task sourcesJar(type: Jar) {
