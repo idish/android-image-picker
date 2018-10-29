@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import androidx.annotation.Nullable;
 
 import com.esafirm.imagepicker.features.common.ImageLoaderListener;
 import com.esafirm.imagepicker.model.Folder;
@@ -101,6 +102,7 @@ public class ImageFileLoader {
                         String name = cursor.getString(cursor.getColumnIndex(projection[1]));
                         String path = cursor.getString(cursor.getColumnIndex(projection[2]));
                         String bucket = cursor.getString(cursor.getColumnIndex(projection[3]));
+
                         Uri imageUri;
                         MediaType mediaType;
                         if (cursor.getInt(cursor.getColumnIndex(projection[4])) == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
@@ -110,9 +112,6 @@ public class ImageFileLoader {
                             imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
                             mediaType = MediaType.IMAGE;
                         }
-//                    Uri imageUri = Uri.withAppendedId(MediaStore.Files.getContentUri("external"),
-//                                            cursor.getInt(cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID)));
-
                         File file = makeSafeFile(path);
                         if (file != null) {
                             if (exlucedImages != null && exlucedImages.contains(file))
@@ -130,7 +129,6 @@ public class ImageFileLoader {
                                 folder.getImages().add(image);
                             }
                         }
-
                     } while (cursor.moveToPrevious());
                 }
             } finally {
@@ -147,6 +145,7 @@ public class ImageFileLoader {
         }
     }
 
+    @Nullable
     private static File makeSafeFile(String path) {
         if (path == null || path.isEmpty()) {
             return null;

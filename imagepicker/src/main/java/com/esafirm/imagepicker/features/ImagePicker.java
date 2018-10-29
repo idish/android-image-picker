@@ -3,10 +3,6 @@ package com.esafirm.imagepicker.features;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.annotation.StyleRes;
-import androidx.fragment.app.Fragment;
 
 import com.esafirm.imagepicker.features.cameraonly.ImagePickerCameraOnly;
 import com.esafirm.imagepicker.features.imageloader.ImageLoader;
@@ -18,6 +14,11 @@ import com.esafirm.imagepicker.model.Image;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
+import androidx.fragment.app.Fragment;
 
 public abstract class ImagePicker {
 
@@ -128,6 +129,11 @@ public abstract class ImagePicker {
 
     public ImagePicker toolbarImageTitle(String title) {
         config.setImageTitle(title);
+        return this;
+    }
+
+    public ImagePicker toolbarDoneButtonText(String text) {
+        config.setDoneButtonText(text);
         return this;
     }
 

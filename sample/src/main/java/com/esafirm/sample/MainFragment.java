@@ -3,8 +3,8 @@ package com.esafirm.sample;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +39,7 @@ public class MainFragment extends Fragment {
                             .single()
                             .toolbarFolderTitle("Folder") // folder selection title
                             .toolbarImageTitle("Tap to select")
+                            .toolbarDoneButtonText("DONE") // done button text
                             .start(0); // image selection title
                 });
 

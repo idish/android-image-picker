@@ -48,10 +48,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:4.8.0"
 
     implementation "androidx.recyclerview:recyclerview:1.0.0"
-    implementation("androidx.appcompat:appcompat:1.0.0") {
-        exclude module: 'animated-vector-drawable'
-        exclude module: 'support-media-compat'
-    }
+    implementation "androidx.appcompat:appcompat:1.0.0"
 
     testImplementation 'junit:junit:4.12'
 }
