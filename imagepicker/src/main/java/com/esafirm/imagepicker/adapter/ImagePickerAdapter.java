@@ -19,23 +19,17 @@ import com.esafirm.imagepicker.model.Image;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
 
 public class ImagePickerAdapter extends BaseListAdapter<ImagePickerAdapter.ImageViewHolder> {
 
     private List<Image> images = new ArrayList<>();
-    private List<Image> selectedImages = new ArrayList<>();
+    private List<Integer> selectedIndices;
 
-    private OnImageClickListener itemClickListener;
     private OnImageSelectedListener imageSelectedListener;
 
-    public ImagePickerAdapter(Context context, ImageLoader imageLoader,
-                              List<Image> selectedImages, OnImageClickListener itemClickListener) {
+    public ImagePickerAdapter(Context context, ImageLoader imageLoader) {
         super(context, imageLoader);
-        this.itemClickListener = itemClickListener;
-
-        if (selectedImages != null && !selectedImages.isEmpty()) {
-            this.selectedImages.addAll(selectedImages);
-        }
     }
 
     @Override
@@ -49,7 +43,6 @@ public class ImagePickerAdapter extends BaseListAdapter<ImagePickerAdapter.Image
     public void onBindViewHolder(ImageViewHolder viewHolder, int position) {
 
         final Image image = images.get(position);
-        final boolean isSelected = isSelected(image);
 
         getImageLoader().loadImage(
                 image.getPath(),
@@ -67,39 +60,31 @@ public class ImagePickerAdapter extends BaseListAdapter<ImagePickerAdapter.Image
             fileTypeLabel = getContext().getResources().getString(R.string.ef_video);
             showFileTypeIndicator = true;
         }
+
         viewHolder.fileTypeIndicator.setText(fileTypeLabel);
         viewHolder.fileTypeIndicator.setVisibility(showFileTypeIndicator
                 ? View.VISIBLE
                 : View.GONE);
 
-        viewHolder.alphaView.setAlpha(isSelected
-                ? 0.5f
-                : 0f);
+        if (isSelected(position)) {
+            viewHolder.selectedLayout.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.selectedLayout.setVisibility(View.GONE);
+        }
 
         viewHolder.itemView.setOnClickListener(v -> {
-            boolean shouldSelect = itemClickListener.onImageClick(
-                    isSelected
-            );
-
-            if (isSelected) {
-                removeSelectedImage(image, position);
-            } else if (shouldSelect) {
-                addSelected(image, position);
+            if (isSelected(position)) {
+                setSelected(position, false);
+                viewHolder.selectedLayout.setVisibility(View.GONE);
+            } else {
+                setSelected(position, true);
+                viewHolder.selectedLayout.setVisibility(View.VISIBLE);
             }
         });
-
-        viewHolder.container.setForeground(isSelected
-                ? ContextCompat.getDrawable(getContext(), R.drawable.ef_ic_done_white)
-                : null);
     }
 
-    private boolean isSelected(Image image) {
-        for (Image selectedImage : selectedImages) {
-            if (selectedImage.getPath().equals(image.getPath())) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isSelected(int position) {
+        return selectedIndices.contains(position);
     }
 
     @Override
@@ -109,35 +94,52 @@ public class ImagePickerAdapter extends BaseListAdapter<ImagePickerAdapter.Image
 
 
     public void setData(List<Image> images) {
-        this.images.clear();
-        this.images.addAll(images);
+        this.images = images;
+        selectedIndices = new ArrayList<>();
     }
 
-    private void addSelected(final Image image, final int position) {
-        mutateSelection(() -> {
-            selectedImages.add(image);
-            notifyItemChanged(position);
-        });
+    private boolean isAllSelected() {
+        return selectedIndices.size() == images.size();
     }
 
-    private void removeSelectedImage(final Image image, final int position) {
-        mutateSelection(() -> {
-            selectedImages.remove(image);
-            notifyItemChanged(position);
-        });
+    public void toggleSelectAll() {
+
+        if (isAllSelected()) {
+            removeAllSelectedSingleClick();
+        } else {
+            addAllSelectedSingleClick();
+        }
     }
 
-    public void removeAllSelectedSingleClick() {
-        mutateSelection(() -> {
-            selectedImages.clear();
-            notifyDataSetChanged();
-        });
-    }
-
-    private void mutateSelection(Runnable runnable) {
-        runnable.run();
+    private void setSelected(int position, boolean isSelected) {
+        if (isSelected && !selectedIndices.contains(position)) {
+            selectedIndices.add(position);
+        } else if (!isSelected && selectedIndices.contains(position)) {
+            selectedIndices.remove((Integer) position);
+        }
         if (imageSelectedListener != null) {
-            imageSelectedListener.onSelectionUpdate(selectedImages);
+            imageSelectedListener.onSelectionUpdate(selectedIndices.size());
+        }
+    }
+
+    private void addAllSelectedSingleClick() {
+        selectedIndices.clear();
+        for (int i = 0; i < images.size(); i++) {
+            selectedIndices.add(i);
+        }
+        notifyItemRangeChanged(0, images.size());
+
+        if (imageSelectedListener != null) {
+            imageSelectedListener.onSelectionUpdate(selectedIndices.size());
+        }
+    }
+
+    private void removeAllSelectedSingleClick() {
+        selectedIndices.clear();
+        notifyItemRangeChanged(0, images.size());
+
+        if (imageSelectedListener != null) {
+            imageSelectedListener.onSelectionUpdate(selectedIndices.size());
         }
     }
 
@@ -149,14 +151,24 @@ public class ImagePickerAdapter extends BaseListAdapter<ImagePickerAdapter.Image
         return images.get(position);
     }
 
-    public List<Image> getSelectedImages() {
-        return selectedImages;
+    public List<Image> calculateSelectedImages() {
+        ArrayList<Image> selected = new ArrayList<>();
+        for (Integer index : selectedIndices) {
+            if (index < 0) continue;
+            Image image = images.get(index);
+            selected.add(image);
+        }
+        return selected;
+    }
+
+    public int getSelectedIndicesSize() {
+        return selectedIndices.size();
     }
 
     static class ImageViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView imageView;
-        private View alphaView;
+        private View selectedLayout;
         private TextView fileTypeIndicator;
         private FrameLayout container;
 
@@ -165,7 +177,7 @@ public class ImagePickerAdapter extends BaseListAdapter<ImagePickerAdapter.Image
 
             container = (FrameLayout) itemView;
             imageView = itemView.findViewById(R.id.image_view);
-            alphaView = itemView.findViewById(R.id.view_alpha);
+            selectedLayout = itemView.findViewById(R.id.selected_layout);
             fileTypeIndicator = itemView.findViewById(R.id.ef_item_file_type_indicator);
         }
     }

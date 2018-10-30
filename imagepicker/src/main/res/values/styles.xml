@@ -1,15 +1,18 @@
 <resources>
 
     <style name="ef_BaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="windowActionModeOverlay">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
     <style name="ef_AppTheme" parent="ef_BaseTheme">
-        <item name="colorPrimary">@color/ef_colorPrimary</item>
-        <item name="colorPrimaryDark">@color/ef_colorPrimaryDark</item>
-        <item name="colorAccent">@color/ef_colorAccent</item>
+        <item name="colorPrimary">@color/ef_primary</item>
+        <item name="colorPrimaryDark">@color/ef_primaryDark</item>
+        <item name="colorAccent">@color/ef_accent</item>
+        <item name="android:textColorPrimary">@color/ef_accent</item>
+        <item name="android:textColorSecondary">@color/ef_accent</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 
     <style name="ef_CustomToolbarTheme" parent="Base.ThemeOverlay.AppCompat.ActionBar">

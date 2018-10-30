@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.esafirm.imagepicker.view.SquareFrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.esafirm.imagepicker.view.SquareFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:foregroundGravity="center">
 
     <ImageView
@@ -13,11 +13,26 @@
         android:contentDescription="@string/ef_content_desc_image"
         android:scaleType="centerCrop"/>
 
-    <View
-        android:id="@+id/view_alpha"
+    <FrameLayout
+        android:id="@+id/selected_layout"
+        android:visibility="gone"
+        tools:visibility="visible"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"/>
+        android:layout_height="match_parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/ef_black_alpha_50"/>
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ef_ic_round_done_24px"/>
+
+    </FrameLayout>
+
 
     <TextView
         android:id="@+id/ef_item_file_type_indicator"
@@ -34,5 +49,6 @@
         android:textSize="@dimen/ef_font_small"
         android:visibility="gone"
         tools:visibility="visible"/>
+
 
 </com.esafirm.imagepicker.view.SquareFrameLayout>

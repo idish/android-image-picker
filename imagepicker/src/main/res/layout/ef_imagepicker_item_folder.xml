@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
-        android:background="@drawable/ef_folder_placeholder"
+        android:background="@drawable/ef_rounded_layout"
         android:contentDescription="@string/ef_content_desc_folder"
         android:scaleType="centerCrop"/>
 
@@ -27,7 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:includeFontPadding="false"
             android:maxLines="3"
             android:textColor="@color/ef_white"
             android:textSize="@dimen/ef_font_small"/>
@@ -36,8 +35,7 @@
             android:id="@+id/tv_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:textColor="@color/ef_grey"
+            android:textColor="@color/ef_secondary_text"
             android:textSize="@dimen/ef_font_small"/>
     </LinearLayout>
 

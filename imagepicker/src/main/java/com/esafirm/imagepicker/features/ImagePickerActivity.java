@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -168,12 +167,18 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
                 getResources().getConfiguration().orientation
         );
 
-        recyclerViewManager.setupAdapters((isSelected) -> recyclerViewManager.selectImage(isSelected)
-                , bucket -> setImageAdapter(bucket.getImages()));
+        recyclerViewManager.setupAdapters(bucket -> setImageAdapter(bucket.getImages()));
 
-        recyclerViewManager.setImageSelectedListener(selectedImage -> {
-            invalidateTitle();
-            if (ConfigUtils.shouldReturn(config, false) && !selectedImage.isEmpty()) {
+        recyclerViewManager.setImageSelectedListener(count -> {
+            if (recyclerViewManager.isDoneButtonEnabled()) {
+                mMenuDone.setEnabled(true);
+                mMenuDone.getIcon().setAlpha(255);
+            } else {
+                mMenuDone.setEnabled(false);
+                mMenuDone.getIcon().setAlpha(130);
+            }
+            actionBar.setTitle(recyclerViewManager.getTitle());
+            if (ConfigUtils.shouldReturn(config, false) && count > 0) {
                 onDone();
             }
         });
@@ -236,6 +241,8 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
         return true;
     }
 
+    MenuItem mMenuDone;
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem menuCamera = menu.findItem(R.id.menu_camera);
@@ -246,10 +253,26 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
             }
         }
 
-        MenuItem menuDone = menu.findItem(R.id.menu_done);
-        if (menuDone != null) {
-            menuDone.setTitle(ConfigUtils.getDoneButtonText(this, config));
-            menuDone.setVisible(recyclerViewManager.isShowDoneButton());
+        mMenuDone = menu.findItem(R.id.menu_done);
+        if (mMenuDone != null) {
+            mMenuDone.setTitle(ConfigUtils.getDoneButtonText(this, config));
+            if (recyclerViewManager.isShowDoneButton()) {
+                mMenuDone.setVisible(true);
+                if (recyclerViewManager.isDoneButtonEnabled()) {
+                    mMenuDone.setEnabled(true);
+                    mMenuDone.getIcon().setAlpha(255);
+                } else {
+                    mMenuDone.setEnabled(false);
+                    mMenuDone.getIcon().setAlpha(130);
+                }
+            } else {
+                mMenuDone.setVisible(false);
+            }
+        }
+
+        MenuItem menuSelectAll = menu.findItem(R.id.menu_select_all);
+        if (menuSelectAll != null) {
+            menuSelectAll.setVisible(recyclerViewManager.isShowSelectAllButton());
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -269,11 +292,24 @@ public class ImagePickerActivity extends AppCompatActivity implements ImagePicke
             onDone();
             return true;
         }
+
+        if (id == R.id.menu_select_all) {
+            onSelectAll();
+            return true;
+        }
         if (id == R.id.menu_camera) {
             captureImageWithPermission();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * On selected all
+     * Toggle select all
+     */
+    private void onSelectAll() {
+        recyclerViewManager.toggleSelectAll();
     }
 
     /**

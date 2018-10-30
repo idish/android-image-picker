@@ -22,7 +22,6 @@ import com.esafirm.imagepicker.model.Folder;
 import com.esafirm.imagepicker.model.Image;
 import com.esafirm.imagepicker.view.GridSpacingItemDecoration;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.esafirm.imagepicker.features.IpCons.MAX_LIMIT;
@@ -68,15 +67,10 @@ public class RecyclerViewManager {
         setItemDecoration(columns);
     }
 
-    public void setupAdapters(OnImageClickListener onImageClickListener, OnFolderClickListener onFolderClickListener) {
-        ArrayList<Image> selectedImages = null;
-        if (config.getMode() == MODE_MULTIPLE && !config.getSelectedImages().isEmpty()) {
-            selectedImages = config.getSelectedImages();
-        }
-
+    public void setupAdapters(OnFolderClickListener onFolderClickListener) {
         /* Init folder and image adapter */
         final ImageLoader imageLoader = config.getImageLoader();
-        imageAdapter = new ImagePickerAdapter(context, imageLoader, selectedImages, onImageClickListener);
+        imageAdapter = new ImagePickerAdapter(context, imageLoader);
         folderAdapter = new FolderPickerAdapter(context, imageLoader, bucket -> {
             foldersState = recyclerView.getLayoutManager().onSaveInstanceState();
             onFolderClickListener.onFolderClick(bucket);
@@ -119,7 +113,7 @@ public class RecyclerViewManager {
             return ConfigUtils.getImageTitle(context, config);
         }
 
-        final int imageSize = imageAdapter.getSelectedImages().size();
+        final int imageSize = imageAdapter.getSelectedIndicesSize();
         final boolean useDefaultTitle = !ImagePickerUtils.isStringEmpty(config.getImageTitle()) && imageSize == 0;
 
         if (useDefaultTitle) {
@@ -159,7 +153,7 @@ public class RecyclerViewManager {
 
     public List<Image> getSelectedImages() {
         checkAdapterIsInitialized();
-        return imageAdapter.getSelectedImages();
+        return imageAdapter.calculateSelectedImages();
     }
 
     public void setImageSelectedListener(OnImageSelectedListener listener) {
@@ -167,23 +161,21 @@ public class RecyclerViewManager {
         imageAdapter.setImageSelectedListener(listener);
     }
 
-    public boolean selectImage(boolean isSelected) {
-        if (config.getMode() == MODE_MULTIPLE) {
-            if (imageAdapter.getSelectedImages().size() >= config.getLimit() && !isSelected) {
-                Toast.makeText(context, R.string.ef_msg_limit_images, Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        } else if (config.getMode() == MODE_SINGLE) {
-            if (imageAdapter.getSelectedImages().size() > 0) {
-                imageAdapter.removeAllSelectedSingleClick();
-            }
-        }
-        return true;
+    public void toggleSelectAll() {
+        imageAdapter.toggleSelectAll();
+    }
+
+    public boolean isShowSelectAllButton() {
+        return !isDisplayingFolderView();
     }
 
     public boolean isShowDoneButton() {
+        return !isDisplayingFolderView();
+    }
+
+    public boolean isDoneButtonEnabled() {
         return !isDisplayingFolderView()
-                && !imageAdapter.getSelectedImages().isEmpty()
+                && imageAdapter.getSelectedIndicesSize() != 0
                 && (config.getReturnMode() != ReturnMode.ALL && config.getReturnMode() != ReturnMode.GALLERY_ONLY);
     }
 
