@@ -8,7 +8,7 @@
     <style name="ef_AppTheme" parent="ef_BaseTheme">
         <item name="colorPrimary">@color/ef_primary</item>
         <item name="colorPrimaryDark">@color/ef_primaryDark</item>
-        <item name="colorAccent">@color/ef_accent</item>
+        <item name="colorAccent">@color/ef_primary_darkest</item>
         <item name="android:textColorPrimary">@color/ef_accent</item>
         <item name="android:textColorSecondary">@color/ef_accent</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>

@@ -13,6 +13,7 @@
 
     <color name="ef_primary">#2196F3</color>
     <color name="ef_primaryDark">#1E88E5</color>
+    <color name="ef_primary_darkest">#1565C0</color>
     <color name="ef_accent">#F5F5F5</color>
     <color name="ef_secondary_text">#BFFFFFFF</color>
     <color name="ef_white_grey">#209E9E9E</color>
