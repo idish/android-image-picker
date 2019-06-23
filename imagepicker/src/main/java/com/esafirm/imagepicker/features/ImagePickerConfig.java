@@ -117,9 +117,9 @@ public class ImagePickerConfig extends BaseConfig implements Parcelable {
     public void setExcludedImages(ArrayList<Image> excludedImages) {
         if (excludedImages != null && !excludedImages.isEmpty()) {
             this.excludedImages = new ArrayList<>();
-            for (Image image : excludedImages) {
-                this.excludedImages.add(new File(image.getPath()));
-            }
+//            for (Image image : excludedImages) {
+//                this.excludedImages.add(new File(image.getPath()));
+//            }
         } else {
             this.excludedImages = null;
         }

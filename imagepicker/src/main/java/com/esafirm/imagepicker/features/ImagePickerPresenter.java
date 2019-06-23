@@ -82,16 +82,6 @@ class ImagePickerPresenter extends BasePresenter<ImagePickerView> {
 
     void onDoneSelectImages(List<Image> selectedImages) {
         if (selectedImages != null && selectedImages.size() > 0) {
-
-            /* Scan selected images which not existed */
-            for (int i = 0; i < selectedImages.size(); i++) {
-                Image image = selectedImages.get(i);
-                File file = new File(image.getPath());
-                if (!file.exists()) {
-                    selectedImages.remove(i);
-                    i--;
-                }
-            }
             getView().finishPickImages(selectedImages);
         }
     }

@@ -32,9 +32,9 @@ public class ImageFileLoader {
     private final String[] projection = new String[]{
             MediaStore.Images.Media._ID,
             MediaStore.Images.Media.DISPLAY_NAME,
-            MediaStore.Images.Media.DATA,
+            MediaStore.Images.Media.DATE_TAKEN,
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-            MediaStore.Files.FileColumns.MEDIA_TYPE,
+            MediaStore.Images.Media.MIME_TYPE,
     };
 
     public void loadDeviceImages(final boolean isFolderMode, final boolean includeVideo, final ArrayList<File> excludedImages, final ImageLoaderListener listener) {
@@ -100,34 +100,31 @@ public class ImageFileLoader {
                     do {
                         long id = cursor.getLong(cursor.getColumnIndex(projection[0]));
                         String name = cursor.getString(cursor.getColumnIndex(projection[1]));
-                        String path = cursor.getString(cursor.getColumnIndex(projection[2]));
-                        String bucket = cursor.getString(cursor.getColumnIndex(projection[3]));
+                        long creationDate = cursor.getLong(cursor.getColumnIndex(projection[2]));
+                        String bucketName = cursor.getString(cursor.getColumnIndex(projection[3]));
+                        String mimeType = cursor.getString(cursor.getColumnIndex(projection[4]));
 
                         Uri imageUri;
                         MediaType mediaType;
-                        if (cursor.getInt(cursor.getColumnIndex(projection[4])) == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
+
+                        if (cursor.getString(cursor.getColumnIndex(mimeType)).contains("video")) {
                             imageUri = Uri.withAppendedPath(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, "" + id);
                             mediaType = MediaType.VIDEO;
                         } else {
                             imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
                             mediaType = MediaType.IMAGE;
                         }
-                        File file = makeSafeFile(path);
-                        if (file != null) {
-                            if (exlucedImages != null && exlucedImages.contains(file))
-                                continue;
 
-                            Image image = new Image(id, name, path, imageUri, mediaType);
-                            temp.add(image);
+                        Image image = new Image(id, name, bucketName, mimeType, imageUri, mediaType, creationDate);
+                        temp.add(image);
 
-                            if (folderMap != null) {
-                                Folder folder = folderMap.get(bucket);
-                                if (folder == null) {
-                                    folder = new Folder(bucket);
-                                    folderMap.put(bucket, folder);
-                                }
-                                folder.getImages().add(image);
+                        if (folderMap != null) {
+                            Folder folder = folderMap.get(bucketName);
+                            if (folder == null) {
+                                folder = new Folder(bucketName);
+                                folderMap.put(bucketName, folder);
                             }
+                            folder.getImages().add(image);
                         }
                     } while (cursor.moveToPrevious());
                 }
@@ -142,18 +139,6 @@ public class ImageFileLoader {
             }
 
             listener.onImageLoaded(temp, folders);
-        }
-    }
-
-    @Nullable
-    private static File makeSafeFile(String path) {
-        if (path == null || path.isEmpty()) {
-            return null;
-        }
-        try {
-            return new File(path);
-        } catch (Exception ignored) {
-            return null;
         }
     }
 

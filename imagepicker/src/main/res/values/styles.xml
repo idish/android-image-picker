@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="ef_BaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="ef_BaseTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -13,11 +13,6 @@
         <item name="android:textColorSecondary">@color/ef_accent</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
-    </style>
-
-    <style name="ef_CustomToolbarTheme" parent="Base.ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:textColorPrimary">@color/ef_colorTextPrimary</item>
-        <item name="actionMenuTextColor">@color/ef_colorTextPrimary</item>
     </style>
 
 </resources>

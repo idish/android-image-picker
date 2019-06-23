@@ -45,7 +45,7 @@ public class ImagePickerAdapter extends BaseListAdapter<ImagePickerAdapter.Image
         final Image image = images.get(position);
 
         getImageLoader().loadImage(
-                image.getPath(),
+                image.getImageUri(),
                 viewHolder.imageView,
                 ImageType.GALLERY
         );
