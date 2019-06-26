@@ -215,7 +215,7 @@ public abstract class ImagePicker {
                 && data != null;
     }
 
-    public static List<Image> getImages(Intent intent) {
+    public static ArrayList<Image> getImages(Intent intent) {
         if (intent == null) {
             return null;
         }

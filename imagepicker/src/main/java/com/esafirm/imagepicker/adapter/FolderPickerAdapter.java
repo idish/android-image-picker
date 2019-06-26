@@ -38,7 +38,7 @@ public class FolderPickerAdapter extends BaseListAdapter<FolderPickerAdapter.Fol
         final Folder folder = folders.get(position);
 
         getImageLoader().loadImage(
-                folder.getImages().get(0).getImageUri(),
+                folder.getImages().get(0).getPath(),
                 holder.image,
                 ImageType.FOLDER
         );
