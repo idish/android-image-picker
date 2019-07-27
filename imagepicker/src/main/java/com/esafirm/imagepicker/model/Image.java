@@ -12,14 +12,18 @@ public class Image implements Parcelable {
     private Uri imageUri;
     private MediaType mediaType;
     private long creationDate;
+    private String bucketName;
+    private String mimeType;
 
-    public Image(long id, String name, String path, Uri imageUri, MediaType mediaType, long creationDate) {
+    public Image(long id, String name, String path, String bucketName, String mimeType, Uri imageUri, MediaType mediaType, long creationDate) {
         this.id = id;
         this.name = name;
         this.path = path;
         this.imageUri = imageUri;
         this.mediaType = mediaType;
         this.creationDate = creationDate;
+        this.bucketName = bucketName;
+        this.mimeType = mimeType;
     }
 
     public long getId() {
@@ -52,6 +56,18 @@ public class Image implements Parcelable {
 
     public long getCreationDate() { return creationDate; }
 
+    public String getMimeType() {return mimeType; }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public String getBucketName() {return bucketName;}
+
+    public void setBucketName(String bucketName) {
+        this.bucketName = bucketName;
+    }
+
     /* --------------------------------------------------- */
     /* > Parcelable */
     /* --------------------------------------------------- */
@@ -69,6 +85,8 @@ public class Image implements Parcelable {
         dest.writeParcelable(this.imageUri, flags);
         dest.writeInt(this.mediaType.value);
         dest.writeLong(this.creationDate);
+        dest.writeString(this.bucketName);
+        dest.writeString(this.mimeType);
     }
 
     protected Image(Parcel in) {
@@ -78,6 +96,8 @@ public class Image implements Parcelable {
         this.imageUri = in.readParcelable(Uri.class.getClassLoader());
         this.mediaType = MediaType.fromInteger(in.readInt());
         this.creationDate = in.readLong();
+        this.bucketName = in.readString();
+        this.mimeType = in.readString();
     }
 
     public static final Creator<Image> CREATOR = new Creator<Image>() {
