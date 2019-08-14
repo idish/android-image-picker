@@ -109,25 +109,28 @@ public class ImageFileLoader {
                         Uri imageUri;
                         MediaType mediaType;
 
-                        if (mimeType.contains("video")) {
-                            imageUri = Uri.withAppendedPath(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, "" + id);
-                            mediaType = MediaType.VIDEO;
-                        } else {
-                            imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
-                            mediaType = MediaType.IMAGE;
-                        }
-
-                        Image image = new Image(id, name, path, bucketName, mimeType, imageUri, mediaType, creationDate);
-                        temp.add(image);
-
-                        if (folderMap != null) {
-                            Folder folder = folderMap.get(bucketName);
-                            if (folder == null) {
-                                folder = new Folder(bucketName);
-                                folderMap.put(bucketName, folder);
+                        // Prevent edge case crash
+                        if (mimeType != null) {
+                            if (mimeType.contains("video")) {
+                                imageUri = Uri.withAppendedPath(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, "" + id);
+                                mediaType = MediaType.VIDEO;
+                            } else {
+                                imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
+                                mediaType = MediaType.IMAGE;
                             }
-                            folder.getImages().add(image);
+                            Image image = new Image(id, name, path, bucketName, mimeType, imageUri, mediaType, creationDate);
+                            temp.add(image);
+
+                            if (folderMap != null) {
+                                Folder folder = folderMap.get(bucketName);
+                                if (folder == null) {
+                                    folder = new Folder(bucketName);
+                                    folderMap.put(bucketName, folder);
+                                }
+                                folder.getImages().add(image);
+                            }
                         }
+
                     } while (cursor.moveToPrevious());
                 }
             } finally {
